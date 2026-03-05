@@ -1,0 +1,5 @@
+05.03.26 - AULA 04 - Mobile (Android)
+
+>> Para o ArrayOf, utiliza-se sempre VAL e não VAR
+>> Em concatenações com apenas variável, usar "O nome é $nameVar" funciona. Se for utilizar uma função da variável, precisa de chaves: "O tamanho da lista é ${listItems.size}"
+>> Geralmente as funções ficam abaixo da main, não acima.
