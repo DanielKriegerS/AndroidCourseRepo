@@ -1,0 +1,17 @@
+04.03.26 - AULA 03 - Mobile (Android)
+
+Precisaremos configurar o console, pois não será usado parte grafica ainda.
+
+Criar módulo:
+File > New > New Module > Selecionar Java Or Kotlin Library - Nomear e definir (nome por padrão sempre minúsculo na primeira letra) > Finish.
+
+Disponibilizar execução do projeto para o módulo criado:
+(necessita file de execução primeiro)
+Run > Run... > Edit Configurations > + > Application - Nomear e editar > Selecionar a file de execução.
+
+>> Kotlin não possui tipos primitivos (segue tendo os mesmos tipos, porém todos classes, incluindo Any).
+>> tipos de variáveis: dontpad.com/ralflima/kotlin
+>> Kotlin possui NullSafety
+>> Kotlin possui um retorno personalizado baseado no Null Safety, quando é nulo, retorna algo personalizado
+
+projeto criado para exemplos: Nivelamento.

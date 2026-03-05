@@ -1,0 +1,34 @@
+03.03.26 - AULA 02 - Mobile (Android)
+
+Executamos instalação do Emulador.
+
+Vimos as gerações de celulares (smartphone a partir da terceira geração, mas adotado de verdade a partir da quarta).
+
+Vimos a respeito das gerações de SO's.
+
+Java X Kotlin:
+	Kotlin 
+		*	é mais amigável;
+		*	pode utilizar bibliotecas Java;
+		*	segurança contra NullPointer;
+		*	tipagem fraca;
+	Gradle
+		*	gerenciador de dependências (como o Maven);
+		*	realiza build;
+		*	oficial e totalmente integrado pro Android/Android Studio;
+		*	podem ser criados scripts para o gradle;
+		
+Templates:
+Testar os templates, eles vão aumentando a complexidade da implementação de acordo com qual escolher (já vem um exemplo pronto).
+
+Outras técs (opções ao Android Studio/Kotlin):
+	React Native (JS/TS) - Nativo parcial.
+	Flutter (Dart) - Nativo.
+	Ionic (angular, vue.js, etc) - Híbrido (pode usar diversos outros frameworks).
+	Xamarin (a principio era muito ruim, mas dizem que melhorou muito, C#) - Nativo.
+	Existem outras, menos populares.
+
+Glossário / Comentários
+--> Nativo	: Quando o código é 100% voltado para o Android.
+--> Híbrido	: Ele gera uma espécie de página, que é executada no device direto.
+
