@@ -1,0 +1,15 @@
+06.03.26 - AULA 05 - Mobile (Android)
+
+>>> Streams: estrutura para armazenamento e filtro de dados (função). Em Kotlin são Sequences e Flows.
+ *	Sequences 	- Sincrono
+ *	Flows 		- Assincrono (Coroutines)
+
+Métodos Take / TakeIf:
+Pega um valor na sequência.
+Pode pegar valor com base na condição, se é falsa a condição, retorna nulo.
+
+Métodos Map / MapNotNull:
+Seleciona o valor na sequência para alguma condição ou processamento.
+Seleciona o valor se não for nulo.
+
+Como emular no celular do Android Studio:
