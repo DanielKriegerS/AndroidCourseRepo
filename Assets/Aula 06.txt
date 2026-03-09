@@ -1,0 +1,18 @@
+09.03.26 - AULA 06 - Mobile (Android)
+
+Função anonima: 
+	* Não tem um nome para referenciar, é executada em um trecho de código. 
+	* Pode inferir o retorno, se não tiver as chaves.
+	* Se tiver chaves, ele infere que o retorno é Unit (Void). Precisa definir retorno, se outro tipo.
+	
+Lambda (função também).
+
+High-Order Functions:
+	* Função principal + Funções subordinadas.
+	* Em alguns casos não é recomendado (vide exemplo Aula 06), embora seja bem utilizado. Isso porque, toda vez que precisamos de novas funções, elas precisam também ser referenciadas na principal (ALTO ACOPLAMENTO).
+	* Não utilizar isso passando valores "hardcode", usar contratos mais genéricos (como a própria função subordinadas a ser executada).
+	
+Trailing Lambdas:
+	* É uma estrutura diferente para referenciar o parâmetro da função (muito util na interface gráfica).
+	* O "molde" da estrutura é comparável com High-Order Functions, da maneira correta.
+	* A forma correta de utilizar seria enviar a última função de parâmetro no corpo da função subordinada (se tiver demais funções, precisam ser enviadas, APENAS A ÚLTIMA NÃO).
