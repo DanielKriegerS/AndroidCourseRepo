@@ -1,4 +1,1 @@
 package com.danielks.nivelamento
-
-class yClass {
-}
