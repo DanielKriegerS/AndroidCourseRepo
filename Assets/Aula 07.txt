@@ -1,0 +1,28 @@
+10.03.26 - AULA 07 - Mobile (Android)
+
+Trabalhando com classes em Kotlin, nunca iniciar var sem valor. Pode usar Null Safety ou = 0, ou "".
+
+Por "baixo dos panos", você pode usar obj.{atributo} e ele vai usar um tipo de get/set para a ação (não são necessários serem criados).
+
+O construtor também é opcional.
+
+Caso precise que a variável não seja alterável diretamente com obj.{atributo} = {valor}, podemos usar um "private set" abaixo do atributo que queremos "travar".
+
+O construtor (CONSTRUTOR 1, no exemplo de código) é quase igual ao do JAVA, mas ao invés de usar o nome da classe, usa a palavra "constructor" (vide AULA 07).
+
+Modificadores de acesso:
+	Public 		-> qualquer classe tem acesso.	*** (esse é o padrão) ***
+	Private		-> acesso apenas pela própria classe.
+	Protected	-> acesso na própria classe ou via herança.
+	Internal	-> acesso apenas dentro do mesmo package (módulo).
+	
+Herança:
+	Para poder compartilhar informações (herdar) entre classes, precisa obrigatoriamente do "open" na declaração da classe.
+	Quando utiliza o construtor na classe filho, não precisa dos parênteses na referência da pai:
+		de assim, onde DEVELOPER herda de PEOPLE 	-> class Developer : People()
+		fica assim									-> class Developer : People
+		
+Abstração:
+	Classe abstrata é como uma classe pai, usamos herança em conjunto.
+	Utiliza o termo "abstract", não é necessário o "open".
+	Métodos obrigatórios da classe abstrata utilizam "abstract" também, se criar sem o "abstract", o método fica opcional.
