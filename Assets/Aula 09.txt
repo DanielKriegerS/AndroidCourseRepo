@@ -1,0 +1,5 @@
+12.03.26 - AULA 09 - Mobile (Android)
+
+Extension Functions:
+	É alterar uma classe sem mexer diretamente nela.
+	Isso funciona apenas de maneira local.
