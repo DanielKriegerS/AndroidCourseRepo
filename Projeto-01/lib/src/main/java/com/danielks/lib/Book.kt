@@ -2,20 +2,25 @@ package com.danielks.lib
 
 
 class Book(id: Int, name: String, author: String, genre: String, numPags: Int, coverType: String) {
-    var id : Int? = id // poderia ser um UUID ou o ISBN (embora preferência UUID)
-    var name : String? = null
-    var author : String? = null
-    var genre : String? = null // String para simplificar, poderia ser uma classe ou lista predefinida
-    var numPags : Int? = null
-    var coverType : String? = null // usando string para simplificar, poderia ser uma classe
+    private var id : Int? = id // poderia ser um UUID ou o ISBN (embora preferência UUID)
+    private var name : String? = null
+    private var author : String? = null
+    private var genre : String? = null // String para simplificar, poderia ser uma classe ou lista predefinida
+    private var numPags : Int? = null
+    private var coverType : String? = null // usando string para simplificar, poderia ser uma classe
 
     init {
         validateAndCreate(id, name, author, genre, numPags, coverType)
     }
 
     private fun validateAndCreate(id : Int, name : String, author : String, genre: String, numPags : Int, coverType : String) {
-        validate(name, author, genre, numPags, coverType)
-        create(id, name, author, genre, numPags, coverType)
+        val isValid = validate(name, author, genre, numPags, coverType)
+        if (isValid) {
+            create(id, name, author, genre, numPags, coverType)
+            return
+        }
+
+        println("Dados do livro inválido!")
     }
 
     private fun validate(name : String, author : String, genre: String, numPags : Int, coverType : String) : Boolean {
