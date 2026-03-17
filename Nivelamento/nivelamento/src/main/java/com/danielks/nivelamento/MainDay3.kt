@@ -8,7 +8,7 @@ fun main() {
 //    Elvis Operator
 //    print(text.length) << assim retorna erro
 //    print(text?.length) << assim retorna nulo
-//    print(text?.length ?: "O texto não pode ficar sem valor" << assim quando é nulo, retorna personalizado
+//    print(text?.length ?: "O texto não pode ficar sem valor") << assim quando é nulo, retorna personalizado
 
 //    print("hello world!")
 //    var sName = "Krieger"

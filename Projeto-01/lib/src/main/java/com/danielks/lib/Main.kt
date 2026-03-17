@@ -1,4 +1,6 @@
 package com.danielks.lib
 
-class Main {
+
+fun main() {
+    var runner = Runner()
 }
