@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -60,6 +61,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,12 +77,149 @@ class MainActivity : ComponentActivity() {
         setContent {
             InterfaceGTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> // esse innerPadding é como se fosse o <HTML>
-                    Exercise1(
+                    Component11(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
         }
+    }
+}
+
+// AULA 16
+@Composable
+fun Component11 (
+    modifier: Modifier
+) {
+    /*
+        LazyRow & LazyColumn -> Vai carregando os elementos conforme precisa renderizar.
+            items   -> utilizado para percorrer listas/coleções
+        Row & Column         -> Carrega tudo de uma vez -performance.
+     */
+
+    // lista com 300 registros
+    val list = List(300) { "Item da lista ${it+1}" }
+
+    LazyColumn (
+        modifier = Modifier
+            .fillMaxSize()
+    ){
+        // repetição
+        items(list) {
+            item ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .height(80.dp),
+                    colors = CardDefaults.cardColors(
+                        contentColor = Color.LightGray
+                    )
+                ){
+                    Box(
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .padding(16.dp),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Text(item)
+                    }
+                }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Component10 (
+    modifier: Modifier
+){
+    var show by remember { mutableStateOf(false) }
+
+    Column (
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
+        // botão para exibir modal
+        Button(
+            onClick = { show = true }
+        ) {
+            Text("Exibir modal")
+        }
+
+        // component modal
+        if (show) {
+            AlertDialog(
+                onDismissRequest = { show = false },
+                title = { Text("Meu primeiro modal") },
+                text = { Text("Hello world") },
+                confirmButton = {
+                    Button(
+                        { show = false }
+                    ) {
+                        Text("Fechar")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        { show = false }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun Component9(modifier: Modifier) {
+    var email by remember {mutableStateOf("")}
+    var isValidEmail by remember {mutableStateOf(false)}
+
+    if (email.length < 5) isValidEmail = true
+
+    Column (
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        OutlinedTextField(
+            value = email,
+            onValueChange = {email = it},
+            textStyle = TextStyle(color = Color.Red),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Icone email"
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            ),
+            // isError = true, // marca a linha com erro ou OK em torno do text
+            trailingIcon = {
+                if (email.isNotEmpty()){
+                    if (isValidEmail) {
+                       Icon(
+                           imageVector = Icons.Default.Check,
+                           contentDescription = "Email valido",
+                           tint = Color.Green
+                       )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Email invalido",
+                            tint = Color.Yellow
+                        )
+                    }
+                }
+            }
+        )
     }
 }
 
@@ -472,7 +618,9 @@ fun Component1(
             textAlign = TextAlign.Center,
             fontSize = 35.sp,
             color = Color.Red,
-            modifier = modifier.fillMaxWidth().padding(bottom = 20.dp)
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp)
         )
         // Text(text) // assim dá erro, precisa extrair o valor
         //Text(text)
