@@ -28,8 +28,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -67,6 +70,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 
@@ -77,10 +83,356 @@ class MainActivity : ComponentActivity() {
         setContent {
             InterfaceGTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> // esse innerPadding é como se fosse o <HTML>
-                    Component11(
+                    MainComponentEx3(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
+            }
+        }
+    }
+}
+
+// CRIAR NOVO PROJETO --> ACTIVITY, nome: "Navigation"
+
+// EXERCICIO 3
+@Composable
+fun MainComponentEx3(
+    modifier: Modifier
+) {
+    var products by remember {
+        mutableMapOf(
+            "Name" to "",
+            "Value" to 0.0,
+            "ImagePath" to ""
+        )
+    }
+    var quantity by remember { mutableIntStateOf(0) }
+
+    // coluna principal
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black),
+    ) {
+        // linha do cabeçalho
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                "Itens: $quantity",
+                fontSize = 30.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+            )
+        }
+
+
+
+        // grid para os itens
+        LazyVerticalGrid (
+            columns = GridCells.Adaptive(20.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            item (
+                span = {
+                    GridItemSpan(maxLineSpan)
+                }
+            ){
+                Card (
+                    modifier = Modifier
+                        .height(150.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0x1144E2FF)
+                    )
+                ) {
+                    Column (
+                        modifier = modifier
+                            .fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ex3img1),
+                            contentDescription = "Imagem 1 - A empregada",
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+//Icon(
+//imageVector = Icons.Default.ShoppingCart,
+//contentDescription = "Icone email",
+//tint = Color(0xFF44E2FF),
+//modifier = Modifier
+//.size(40.dp)
+//)
+
+// AULA 18
+@Composable
+fun Component13(
+    modifier: Modifier
+) {
+
+    var lightTheme by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(if (lightTheme) Color.White else Color.Black),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Switch(
+            checked = lightTheme,
+            onCheckedChange = {
+                lightTheme = it
+            }
+        )
+    }
+}
+
+// AULA 17
+// EXERCICIO 2
+
+//helpers
+private val noteRegex = Regex("""^\d{0,2}([.,]\d{0,2})?$|^10([.,]\d{0,2})?$""")
+
+private fun acceptNoteChange(
+    newValue: String,
+    update: (String) -> Unit
+) {
+    if (newValue.isEmpty()) {
+        update("")
+        return
+    }
+    if (!noteRegex.matches(newValue)) return
+
+    val normalized = newValue.replace(',', '.')
+    val toParse = if (normalized.endsWith(".")) normalized.dropLast(1) else normalized
+    val numeric = toParse.toDoubleOrNull()
+
+    if (numeric == null) {
+        // Estados intermediários como "10." ou "1," ainda são aceitos
+        update(newValue)
+        return
+    }
+
+    if (numeric in 0.0..10.0) {
+        update(newValue)
+    }
+}
+
+@Composable
+fun MainComponentEx2(
+    modifier: Modifier
+) {
+    var name by remember { mutableStateOf("") }
+    var note1 by remember { mutableStateOf("") }
+    var note2 by remember { mutableStateOf("") }
+    var note3 by remember { mutableStateOf("") }
+    var status by remember { mutableStateOf("") }
+
+    val labels = listOf("Nome", "Nota 1", "Nota 2", "Nota 3")
+    val values = listOf(name, note1, note2, note3)
+    val setters = listOf<(String) -> Unit>(
+        { name = it },
+        { note1 = it },
+        { note2 = it },
+        { note3 = it }
+    )
+
+    val isButtonEnabled = values.all { it.isNotBlank() }
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        labels.indices.forEach { idx ->
+
+            val keyboardOptions =
+                if (idx == 0)
+                    KeyboardOptions(keyboardType = KeyboardType.Text)
+                else
+                    KeyboardOptions(keyboardType = KeyboardType.Decimal)
+
+            val setter: (String) -> Unit = { newValue ->
+                if (idx == 0) {
+                    // Nome - aceita tudo
+                    setters[idx](newValue)
+                } else {
+                    // Notas - aceita apenas números e um separador decimal (.,)
+                    // Permitindo vazio para o usuário conseguir apagar.
+                    acceptNoteChange(newValue) { cleaned ->
+                        setters[idx](cleaned)
+                    }
+                }
+            }
+
+            GenerateField(
+                modifier = Modifier
+                    .padding(vertical = 5.dp),
+                value = values[idx],
+                label = labels[idx],
+                keyboardOptions = keyboardOptions,
+                onValueChange = setter
+            )
+        }
+
+        Button(
+            onClick = {
+                val n1 = note1.replace(',', '.').toDoubleOrNull() ?: 0.0
+                val n2 = note2.replace(',', '.').toDoubleOrNull() ?: 0.0
+                val n3 = note3.replace(',', '.').toDoubleOrNull() ?: 0.0
+                status = calculateAverage(n1, n2, n3)
+            },
+            enabled = isButtonEnabled,
+            modifier = Modifier.padding(top = 12.dp)
+        ) {
+            Text("Calcular Média")
+        }
+
+        AverageComponent(
+            status = status,
+            isButtonEnabled = isButtonEnabled
+        )
+
+    }
+}
+
+
+@Composable
+fun AverageComponent(
+    status: String,
+    isButtonEnabled: Boolean
+) {
+    if (status.isNotEmpty() && isButtonEnabled) {
+        Row {
+            Text(
+                text = "Status: $status",
+                fontSize = 40.sp
+            )
+        }
+    }
+}
+
+
+@Composable
+fun GenerateField(
+    modifier: Modifier = Modifier,
+    value: String,
+    label: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    onValueChange: (String) -> Unit
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(label) },
+        modifier = modifier
+            .padding(vertical = 5.dp),
+        keyboardOptions = keyboardOptions
+    )
+}
+
+fun calculateAverage(note1 : Double, note2 : Double, note3 : Double) : String {
+    var average : Double = (note1 + note2 + note3) / 3
+
+    // essa validação deveria ser outra func!!!
+    if (average >= 7) return  "Aprovado"
+    if (average < 6) return "Reprovado"
+
+    return "Recuperação"
+}
+
+
+
+@Composable
+fun Component12(
+    modifier: Modifier
+) {
+    // estrutura
+    // LazyVerticalGrid --> como column
+    // LazyHorizontalGrid --> como row
+
+    var selectedNumber by remember { mutableStateOf("Sem numero selecionado.") }
+
+    val numbers = List(30) { it + 1 }
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        //
+        // isso não funciona se não estiver em uma estrutura "item"
+        item (
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ){
+            Text(
+                selectedNumber.toString(),
+                fontSize = 25.sp,
+                modifier = modifier
+                    .padding(vertical = 9.dp)
+            )
+        }
+
+        items(numbers) {
+            number ->
+            GenCard(
+                number,
+                selectNumberFunction = { value -> selectedNumber = "O número selecionado é: $value" }
+            )
+        }
+    }
+}
+
+@Composable
+fun GenCard(
+    number : Int,
+    selectNumberFunction : (Int) -> Unit
+) {
+    Card (
+        modifier = Modifier
+        .height(120.dp)
+    ) {
+        Column (
+            modifier = Modifier
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFF4287F5),
+                            Color(0xFF0019D4)
+                        )
+                    )
+                )
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                number.toString(),
+                fontSize = 25.sp,
+                color = Color.White
+            )
+            Button(
+                onClick = { selectNumberFunction(number) }
+            ) {
+                Text("Clique aqui")
             }
         }
     }
