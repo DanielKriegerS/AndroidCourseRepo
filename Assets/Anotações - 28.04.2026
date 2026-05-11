@@ -1,0 +1,23 @@
+Aula 28.04.2026
+
+HABILITAR USO DE APIs:
+
+	1 -> Habilitar uso de internet (AndroidManifest.xml)
+	 	<uses-permission android:name="android.permission.INTERNET" />
+		^ Acima da linha <application
+		^ Geralmente linha 5
+
+	2 -> Verificar existência da dependência Firebase (Build.gradle.kts - Module App)
+		se o projeto tiver ela, pode causar interferência no uso de outras dependencias que fazem requisições para APIs
+		
+	3 -> Adicionar dependencias (Build.gradle.kts - Module App)
+		implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+		implementation("com.squareup.retrofit2:retrofit:2.11.0")
+		implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+		implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+ 
+JSON PLACEHOLDER:
+	APIs "fake" para testagem.
+	
+WEATHERAPI:
+	Retorna climatempo de região.
