@@ -3,6 +3,8 @@ package com.danielks.crudproject.network.remote
 import com.danielks.crudproject.network.service.CoreService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.getValue
+import kotlin.jvm.java  
 
 object CoreRetrofitClient {
     // essas URL base poderiam ser variáveis de ambiente por segurança e para diferentes perfis (dev, prod,..)

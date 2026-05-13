@@ -25,10 +25,11 @@ class ZipCodeViewModel : ViewModel() {
     fun getAddressByZipCode(zipCode: ZipCode) {
         viewModelScope.launch {
             isSubmitting = true
+            zipError = null
             try {
-                addressState = null
                 addressState = repository.getAddressByZipCode(zipCode)
             } catch (e: Exception) {
+                e.printStackTrace()
                 zipError = "Falha ao buscar CEP."
                 addressState = null
             } finally {

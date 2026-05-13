@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -68,13 +71,13 @@ fun ContactFormScreen(
         if (contactId != null) {
             coreViewModel.getContact(contactId)
         } else {
-            coreViewModel.resetFields()  // se você expuser isso
+            coreViewModel.resetFields()
         }
     }
 
     // Sempre que o Zip retornar address, joga para o Core
     LaunchedEffect(addressFromZip) {
-        coreViewModel.updateAddress(addressFromZip)
+        coreViewModel.setAddress(addressFromZip)
     }
 
     // Helper: mantém só dígitos e faz busca quando tiver 8
@@ -84,9 +87,8 @@ fun ContactFormScreen(
 
         // busca automática ao completar 8 dígitos
         if (digits.length == 8) {
-            zipCodeViewModel.getAddressByZipCode(ZipCode(digits)) // ajuste conforme sua classe ZipCode
+            zipCodeViewModel.getAddressByZipCode(ZipCode(digits))
         } else {
-            // opcional: se mudar o CEP, limpar address atual
             coreViewModel.clearAddress()
         }
     }
@@ -118,15 +120,6 @@ fun ContactFormScreen(
                         if (contactId == null) {
                             coreViewModel.addContact()
                         } else {
-                            // Cria Contact a partir dos campos
-                            val updated = Contact(
-                                id = contactId,
-                                name = coreViewModel.name,
-                                email = coreViewModel.email,
-                                phone = coreViewModel.phone,
-                                birthday = coreViewModel.birthday,
-                                address = coreViewModel.address // ideal ser opcional
-                            )
                             coreViewModel.updateContact(contactId)
                             isEditMode = false
                         }
@@ -136,6 +129,12 @@ fun ContactFormScreen(
                 ) {
                     Text(if (contactId == null) "Salvar" else "Atualizar")
                 }
+                OutlinedButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Voltar")
+                }
             }
         }
     ) { padding ->
@@ -143,7 +142,9 @@ fun ContactFormScreen(
             Modifier
                 .padding(padding)
                 .padding(16.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
@@ -184,9 +185,10 @@ fun ContactFormScreen(
             Text("Endereço (opcional)", style = MaterialTheme.typography.titleMedium)
 
             // CEP
+            // Campos preenchidos automaticamente (somente leitura)
             OutlinedTextField(
                 value = zipText,
-                onValueChange = { if (isEditMode) onZipChanged(it) },
+                onValueChange = { if(isEditMode) onZipChanged(it) },
                 label = { Text("CEP") },
                 enabled = isEditMode,
                 modifier = Modifier.fillMaxWidth(),
@@ -197,10 +199,13 @@ fun ContactFormScreen(
                 }
             )
 
-            // Campos preenchidos automaticamente (somente leitura)
+            zipCodeViewModel.zipError?.let {
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
+
             OutlinedTextField(
                 value = address?.street.orEmpty(),
-                onValueChange = { },
+                onValueChange = {},
                 label = { Text("Rua") },
                 enabled = false,
                 modifier = Modifier.fillMaxWidth()
@@ -208,36 +213,38 @@ fun ContactFormScreen(
 
             OutlinedTextField(
                 value = address?.neighborhood.orEmpty(),
-                onValueChange = { },
+                onValueChange = {},
                 label = { Text("Bairro") },
                 enabled = false,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 OutlinedTextField(
                     value = address?.city.orEmpty(),
-                    onValueChange = { },
+                    onValueChange = {},
                     label = { Text("Cidade") },
                     enabled = false,
                     modifier = Modifier.weight(1f)
                 )
+
                 OutlinedTextField(
                     value = address?.state.orEmpty(),
-                    onValueChange = { },
+                    onValueChange = {},
                     label = { Text("UF") },
                     enabled = false,
                     modifier = Modifier.width(90.dp)
                 )
             }
-
             // Número: editável
             OutlinedTextField(
                 value = address?.number.orEmpty(),
                 onValueChange = { newNumber ->
                     if (!isEditMode) return@OutlinedTextField
-                    // Atualiza number no address
-                    coreViewModel.updateAddress(addressFromZip)
+                    coreViewModel.updateAddressNumber(newNumber)
                 },
                 label = { Text("Número") },
                 enabled = isEditMode && address != null,
@@ -245,14 +252,6 @@ fun ContactFormScreen(
             )
 
             Spacer(Modifier.height(8.dp))
-
-            // Ações
-                OutlinedButton(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Voltar")
-                }
             }
         }
 }

@@ -18,8 +18,11 @@ class ZipCodeRepository {
             throw IllegalArgumentException("CEP não encontrado")
         }
 
+
+        val cepDigits = dto.cep.orEmpty().filter { it.isDigit() }
+
         return Address(
-            zipCode = ZipCode(dto.cep.orEmpty().filter { it.isDigit() }),
+            zipCode = ZipCode(cepDigits),
             street = dto.logradouro.orEmpty(),
             neighborhood = dto.bairro.orEmpty(),
             city = dto.localidade.orEmpty(),

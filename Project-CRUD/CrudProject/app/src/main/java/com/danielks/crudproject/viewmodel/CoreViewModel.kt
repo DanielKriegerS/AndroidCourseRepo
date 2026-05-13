@@ -8,22 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.danielks.crudproject.model.Address
 import com.danielks.crudproject.model.coremodels.Contact
 import com.danielks.crudproject.repository.CoreRepository
-import com.danielks.crudproject.network.dto.AddressApiDto
-import com.danielks.crudproject.network.dto.ContactApiDto
 import kotlinx.coroutines.launch
 
 class CoreViewModel : ViewModel() {
 
     private val repository = CoreRepository()
 
+
     var contacts by mutableStateOf<List<Contact>>(emptyList())
         private set
-
     var isSubmitting by mutableStateOf(false)
         private set
+    var name by mutableStateOf("")
+    var email by mutableStateOf("")
+    var phone by mutableStateOf("")
+    var birthday by mutableStateOf("")
 
-    var address by mutableStateOf<Address?>(null)
-        private set
+    private var _address by mutableStateOf<Address?>(null)
+    val address: Address? get() = _address
 
     var formError by mutableStateOf<String?>(null)
         private set
@@ -31,15 +33,23 @@ class CoreViewModel : ViewModel() {
     var saveSucceeded by mutableStateOf(false)
         private set
 
-    var name by mutableStateOf("")
-    var email by mutableStateOf("")
-    var phone by mutableStateOf("")
-    var birthday by mutableStateOf("")
+
+    fun setAddress(newAddress: Address?) {
+        _address = newAddress
+    }
+
+    fun clearAddress() {
+        _address = null
+    }
+
+    fun updateAddressNumber(newNumber: String) {
+        _address = _address?.copy(number = newNumber)
+    }
+
 
     init {
         fetchContacts()
     }
-
 
     fun consumeSaveSucceeded() {
         saveSucceeded = false
@@ -51,8 +61,7 @@ class CoreViewModel : ViewModel() {
             block()
         } catch (e: Exception) {
             e.printStackTrace()
-            // Se quiser, você pode definir uma mensagem genérica também aqui
-            // formError = "Ocorreu um erro. Tente novamente."
+            formError = "Ocorreu um erro. Tente novamente."
         } finally {
             isSubmitting = false
         }
@@ -66,23 +75,16 @@ class CoreViewModel : ViewModel() {
         refreshContacts()
     }
 
-    fun updateAddress(newAddress: Address?) {
-        address = newAddress
-    }
-
-    /** Monta um Contact a partir dos campos atuais do formulário */
-    private fun buildContact(id: Int? = null): Contact {
-        return Contact(
+    private fun buildContact(id: Int? = null): Contact =
+        Contact(
             id = id,
             name = name,
             email = email,
             phone = phone,
             birthday = birthday,
-            address = address // <- opcional
+            address = _address
         )
-    }
 
-    /** Mensagem genérica conforme você pediu */
     private fun setGenericFormError() {
         formError = "Verifique os dados informados."
     }
@@ -117,19 +119,15 @@ class CoreViewModel : ViewModel() {
         email = contact.email
         phone = contact.phone
         birthday = contact.birthday
-        address = contact.address
+        _address = contact.address
     }
 
-    /**
-     * Update sem receber Contact por parâmetro.
-     * A fonte da verdade são os states (name/email/...)
-     */
     fun updateContact(id: Int) {
         clearFormError()
 
         saveSucceeded = false
 
-        val updated = buildContact(id = id)
+        val updated = buildContact(id)
 
         if (!updated.isValid()) {
             setGenericFormError()
@@ -153,35 +151,13 @@ class CoreViewModel : ViewModel() {
         refreshContacts()
     }
 
-    fun clearAddress() {
-        address = null
-    }
-
     fun resetFields() {
         name = ""
         email = ""
         phone = ""
         birthday = ""
-        address = null
+        _address = null
         // opcional: também limpar erro quando limpar o form
         formError = null
     }
-
-    private fun toApiDto(id: Int? = null) = ContactApiDto(
-        id = id,
-        name = name,
-        email = email,
-        phone = phone,
-        birthday = birthday,
-        address = address?.let {
-            AddressApiDto(
-                zipCode = it.zipCode.value,
-                street = it.street,
-                neighborhood = it.neighborhood,
-                city = it.city,
-                state = it.state,
-                number = it.number
-            )
-        }
-    )
 }
